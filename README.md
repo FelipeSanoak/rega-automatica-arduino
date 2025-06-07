@@ -17,6 +17,5 @@ Este projeto consiste em um sistema automático de rega para plantas, utilizando
 - Cabos e protoboard  
 
 ---
-
-## Estrutura do Repositório
+Este programa usa C++
 
