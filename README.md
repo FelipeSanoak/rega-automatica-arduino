@@ -18,7 +18,3 @@ Este projeto consiste em um sistema automático de rega para plantas, utilizando
 
 ---
 Este programa usa C++
-
-## Exemplo do Circuito
-
-![Circuito Montado](images/circuito.png)
