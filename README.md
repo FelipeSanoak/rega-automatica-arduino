@@ -21,4 +21,4 @@ Este programa usa C++
 
 ## Exemplo do Circuito
 
-![Circuito Montado](images/circuito.jpg)
+![Circuito Montado](images/circuito.png)
