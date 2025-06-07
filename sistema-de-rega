@@ -1,0 +1,92 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+int moistureSensorPin = A0;  
+int pumpPin = 9;            
+
+int ThresholdOn = 30;
+int ThresholdOff = 50;
+int moisturePercent = 0;
+bool pumpRunning = false;
+
+void setup() {
+  pinMode(pumpPin, OUTPUT);
+  digitalWrite(pumpPin, HIGH); 
+  Serial.begin(9600);
+  
+  lcd.begin(16, 2);
+  lcd.setCursor(0, 0);
+  lcd.print("Sistema de Rega");
+}
+
+void loop() {
+  int moistureLevel = analogRead(moistureSensorPin);
+
+  moisturePercent = map(moistureLevel, 876, 0, 100, 0);
+  moisturePercent = constrain(moisturePercent, 0, 100);
+
+  if (Serial.available()) {
+    char command = Serial.read();
+  
+    switch (command) {
+      case 'W': 
+        digitalWrite(pumpPin, LOW); 
+        pumpRunning = true;
+        Serial.println("Rega manual iniciada");
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Iniciado Manual");
+        lcd.setCursor(0, 1);
+        lcd.print("Ligado por 5s");
+        delay(5000);
+        break;
+        
+      case 'S': 
+        digitalWrite(pumpPin, HIGH);   
+        pumpRunning = false;
+        Serial.println("Rega manual parada");
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Rega Manual Off");
+        lcd.setCursor(0, 1);
+        lcd.print("Aguardando...");
+        delay(5000);
+        break;
+      
+      default:
+        Serial.println("Comando desconhecido");
+        break;
+    }
+  } 
+  else {
+    // 
+    if (!pumpRunning) { 
+      if (moisturePercent < ThresholdOn) {
+        digitalWrite(pumpPin, LOW); 
+        Serial.println("Rega automatica ativada");
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Rega Ligada");
+        lcd.setCursor(0, 1);
+        lcd.print("Umidade: ");
+        lcd.print(moisturePercent);
+        lcd.print("%");
+      } 
+      else if (moisturePercent >= ThresholdOff) {
+        digitalWrite(pumpPin, HIGH);
+        Serial.println("Rega automatica desligada");
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Rega Desligada");
+        lcd.setCursor(0, 1);
+        lcd.print("Umidade: ");
+        lcd.print(moisturePercent);
+        lcd.print("%");
+      }
+     
+    }
+  }
+  
+  delay(1000); 
+}
